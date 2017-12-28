@@ -1,7 +1,8 @@
 <?php
 define('APPPATH', dirname(__FILE__));  
-include '../Loader.php';  
-$loader = new \Smallphp\Loader();   
+//include '../Loader.php';  
+include '/data/www/wwwroot/vendor/autoload.php';
+$loader = new \Smallphp\Loader(); 
 $loader->registerNamespace([
 	'App\Library'=>APPPATH.'/library',
 ]);
