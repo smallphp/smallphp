@@ -19,7 +19,12 @@ $loader -> registerAutoload();
 \Smallphp\Di :: set('config', function() {
 		return new \Smallphp\Config(APPPATH . '/config/');
 	} 
-);  
+);
+
+\Smallphp\Di :: set('db', function() {
+		return new \Smallphp\Database();
+	} 
+);
 
 try {  
 	Smallphp\Request :: factory() -> method('POST') -> params(['name' => 'zhangjie']) -> execute(); 
