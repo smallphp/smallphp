@@ -1,8 +1,8 @@
 {
     "name": "smallphp/framework",
     "description": "smallphp framework",
-    "keywords" : [
-	"smallphp"
+    "keywords":[
+	"smallphp",
 	"php framework"
     ],
     "license": "MIT",
