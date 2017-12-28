@@ -25,7 +25,7 @@ $loader -> registerAutoload();
 );  
 
 try {  
-	Smallphp\Request :: factory() -> method('POST') -> params() -> execute(); 
-  }   catch (\Exception $e) {    
+	\Smallphp\Request :: factory() -> execute(); 
+} catch (\Exception $e) {    
 	echo $e->getMessage();    
 }    

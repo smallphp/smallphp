@@ -29,6 +29,6 @@ $loader -> registerAutoload();
 
 try {  
 	\Smallphp\Request :: factory() -> execute(); 
-  }   catch (\Exception $e) {    
+} catch (\Exception $e) {    
 	echo $e->getMessage();    
 }
