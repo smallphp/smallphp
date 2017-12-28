@@ -1,5 +1,5 @@
 # smallphp
-Smallphp Framework框架专注高效、敏捷开发项目
+Smallphp Framework框架专注高效、敏捷开发PHP项目
 
 入口文件index.php  
 define('APPPATH', dirname(__FILE__));  
