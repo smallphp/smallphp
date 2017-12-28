@@ -27,7 +27,7 @@ $loader -> registerAutoload();
 );
 
 try {  
-	Smallphp\Request :: factory() -> method('POST') -> params(['name' => 'zhangjie']) -> execute(); 
+	Smallphp\Request :: factory() -> method('POST') -> params() -> execute(); 
   }   catch (\Exception $e) {    
 	echo $e->getMessage();    
 }

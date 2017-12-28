@@ -8,7 +8,7 @@ class Mysqli implements \Smallphp\Database\Adapter {
 	}
 
 	public function select($sql) {
-		return new \Smallphp\Database\Adapter\Mysqli\Result();
+
 	}
 
 	public function update($sql) {
@@ -21,5 +21,9 @@ class Mysqli implements \Smallphp\Database\Adapter {
 
 	public function delete($sql) {
 		
+	}
+
+	private function connecttion() {
+
 	}
 }
