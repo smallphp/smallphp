@@ -1,5 +1,5 @@
 {
-    "name": "smallphp",
+    "name": "smallphp/smallphp",
     "description": "smallphp framework",
     "license": "smallphp",
     "minimum-stability": "stable",
