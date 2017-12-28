@@ -2,7 +2,7 @@
 define('APPPATH', dirname(__FILE__));  
 //include '../Loader.php';  
 include '/data/www/wwwroot/vendor/autoload.php';
-$loader = new \Smallphp\Loader(); 
+$loader = new \Smallphp\Loader();   
 $loader->registerNamespace([
 	'App\Library'=>APPPATH.'/library',
 ]);
@@ -28,7 +28,7 @@ $loader -> registerAutoload();
 );
 
 try {  
-	Smallphp\Request :: factory() -> method('POST') -> params() -> execute(); 
+	\Smallphp\Request :: factory() -> execute(); 
   }   catch (\Exception $e) {    
 	echo $e->getMessage();    
 }
