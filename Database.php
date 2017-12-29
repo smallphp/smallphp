@@ -13,6 +13,6 @@ class Database {
 	}
 
 	public function select($sql) {
-		self::$adapter->query($sql);
+		return self::$adapter->query($sql);
 	}
 }
