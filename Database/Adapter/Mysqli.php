@@ -1,29 +1,35 @@
 <?php
 namespace Smallphp\Database\Adapter;
 
-class Mysqli implements \Smallphp\Database\Adapter {
+class Mysqli implements \Smallphp\Database\Adapter  {
+	
+	private $config = array();
+
+	private static $identity = null;
 
 	public function __construct($config) {
-
+		$this->config = $config;
 	}
 
-	public function select($sql) {
-
+	public function query($sql) {
+		$this->connect();
 	}
 
-	public function update($sql) {
-		
+	public function lastInsertId() {
+	
 	}
 
-	public function insert($sql) {
-		
+	public function getErrorCode() {
+	
 	}
 
-	public function delete($sql) {
-		
+	public function getErrorInfo() {
+	
 	}
-
-	private function connecttion() {
-
+	
+	private function connect() {
+		if (self::$identity === NULL) {
+			self::$identity = new \Mysqli($this->config['dbhost'], $this->config['dbuser'], $this->config['passwd']);
+		}
 	}
 }

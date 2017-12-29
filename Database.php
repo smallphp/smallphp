@@ -2,7 +2,7 @@
 namespace Smallphp;
 
 class Database {
-	
+
 	private static $adapter = null;
 
 	public function __construct() {
@@ -10,5 +10,9 @@ class Database {
 		if (!self::$adapter) {
 			self::$adapter = new $config['adapter']($config);
 		}
+	}
+
+	public function select($sql) {
+		self::$adapter->query($sql);
 	}
 }

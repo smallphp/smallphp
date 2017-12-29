@@ -2,12 +2,12 @@
 namespace Smallphp\Database;
 
 interface Adapter {
+	
+	public function query($sql);
 
-	public function select($sql);
+	public function lastInsertId();
 
-	public function update($sql);
+	public function getErrorCode();
 
-	public function insert($sql);
-
-	public function delete($sql);
+	public function getErrorInfo();
 }
