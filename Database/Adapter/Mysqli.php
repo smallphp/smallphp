@@ -3,16 +3,34 @@ namespace Smallphp\Database\Adapter;
 
 class Mysqli implements \Smallphp\Database\Adapter  {
 	
+	/**
+	* 配置对象
+	*/
 	private $config = array();
-
+	
+	/**
+	* 链接句柄
+	*/
 	private $identity = null;
-
+	
+	/**
+	* 资源对象
+	*/
 	private $resource = null;
-
+	
+	/**
+	* 错误编码
+	*/
 	private $errorCode = 0;
 
+	/**
+	* 错误信息
+	*/
 	private $errorInfo = '';
 	
+	/**
+	* 初始化配置
+	*/
 	public function __construct($config) {
 		$this->config = $config;
 	}
