@@ -9,36 +9,60 @@ class Mysqli implements \Smallphp\Database\Adapter  {
 
 	private $resource = null;
 
+	private $errorCode = 0;
+
+	private $errorInfo = '';
+	
 	public function __construct($config) {
 		$this->config = $config;
 	}
-
+	
+	/**
+	* 执行一条Sql语句
+	*/
 	public function query($sql) {
 		$this->connect();
 		$this->resource = mysqli_query($this->identity, $sql);
 		if ($this->resource === FALSE) {
-			throw new \Exception(mysqli_error($this->identity), mysqli_errno($this->identity));
+			if ($this->config['debug'] === true) {
+				throw new \Exception(mysqli_error($this->identity), mysqli_errno($this->identity));
+			} else {
+				$this->errorCode =  mysqli_errno($this->identity);
+				$this->errorInfo =  mysqli_error($this->identity);
+			}
 		}
 		if ($this->resource instanceof \mysqli_result) {
 			return new \Smallphp\Database\Adapter\Mysqli\Result($this->resource);
 		} else {
-			echo 'i';
+			return true;
 		}
 	}
-
+	
+	/**
+	* 获取最后插入自增id
+	*/
 	public function lastInsertId() {
-	
+		$this->connect();
+		return \mysqli_insert_id($this->identity);
 	}
-
+	
+	/**
+	* 获取错误编码
+	*/
 	public function getErrorCode() {
-	
+		return $this->errorCode;
 	}
-
+	
+	/**
+	* 获取错误信息
+	*/
 	public function getErrorInfo() {
-	
+		return $this->errorInfo;
 	}
-		
 
+	/**
+	* 关闭链接
+	*/
 	public function __destruct() {
 		if ($this->identity) {
 			mysqli_close($this->identity);
@@ -52,8 +76,11 @@ class Mysqli implements \Smallphp\Database\Adapter  {
 		if ($this->identity === NULL) {
 			$this->identity = @new \Mysqli($this->config['dbhost'], $this->config['dbuser'], $this->config['passwd'], $this->config['dbname']);
 			if (!$this->identity) {
-				throw new \Exception(mysqli_connect_error(), mysqli_connect_errno());
+				if ($this->config['debug'] === true) {
+					throw new \Exception(mysqli_connect_error(), mysqli_connect_errno());
+				}
 			}
 		}
+		return $this->identity;
 	}
 }

@@ -7,5 +7,5 @@ return array(
 	'dbuser'=>'root',
 	'passwd'=>'',
 	'charset'=>'utf8',
-	'debug'=>false,
+	'debug'=>true,
 );
