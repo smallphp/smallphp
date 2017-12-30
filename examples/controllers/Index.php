@@ -4,7 +4,9 @@ namespace App\Controller;
 class Index extends \Smallphp\Mvc\Controller {
 	
 	public function index() {
-		$view = \Smallphp\Di::get('view');
+		$view = \Smallphp\Di::get('view'); //view
+		$model = new \App\Model\Test();	   //model
+
 		$view->assign('title', 'Hello World');
 		$view->render('index/index.php');
 	}
