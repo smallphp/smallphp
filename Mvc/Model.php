@@ -2,11 +2,20 @@
 namespace Smallphp\Mvc;
 
 abstract class Model {
+	
+	/**
+	* 模型实例
+	*/
+	private $table = array();
 
-	private $tables = array();
-
+	/**
+	* 数据库实例
+	*/
 	protected $db = NULL;
 
+	/**
+	* 初始化model
+	*/
 	public function __construct() {
 		if ($this->db === NULL) {
 			$this->db = new \Smallphp\Database();	
@@ -14,6 +23,7 @@ abstract class Model {
 		$class = get_class($this);
 		if (!isset($this->tables[$class])) {
 			$this->tables[$class] = new \StdClass();
+			$this->tables[$class]->where = [];
 			$this->tables[$class]->offset = $this->tables[$class]->size = 0;
 			$this->tables[$class]->table =  strtolower(preg_replace('`.+(?<=['.preg_quote('\\').'])`', '', $class));
 		}
@@ -54,6 +64,15 @@ abstract class Model {
 			return $result[0]['count(*)'];
 		}
 		return 0;
+	}
+	
+	/**
+	* 条件实现
+	*/
+	public function where($condition) {
+		$class = get_class($this);
+		$this->tables[$class]->where = $condition;
+		return $this;
 	}
 	
 	/**
