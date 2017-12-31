@@ -1,9 +1,9 @@
 <?php
 namespace App\Model;
 
-class Test extends \Smallphp\Mvc\Model {
+class User extends \Smallphp\Mvc\Model {
 
-	public $table = 'test';
+	public $table = 'user';
 
 	public function __construct() {
 		parent::__construct();

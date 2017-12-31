@@ -6,7 +6,7 @@ abstract class Model {
 	/**
 	* 模型实例
 	*/
-	private $table = array();
+	private $tables = array();
 
 	/**
 	* 数据库实例
@@ -25,7 +25,11 @@ abstract class Model {
 			$this->tables[$class] = new \StdClass();
 			$this->tables[$class]->where = [];
 			$this->tables[$class]->offset = $this->tables[$class]->size = 0;
-			$this->tables[$class]->table =  strtolower(preg_replace('`.+(?<=['.preg_quote('\\').'])`', '', $class));
+			if (isset($this->table)) {
+				$this->tables[$class]->table = $this->table;
+			} else {
+				$this->tables[$class]->table =  strtolower(preg_replace('`.+(?<=['.preg_quote('\\').'])`', '', $class));
+			}
 		}
 	}
 	
