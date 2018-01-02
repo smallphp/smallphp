@@ -82,6 +82,9 @@ class Mysqli implements \Smallphp\Database\Adapter  {
 	* 关闭链接
 	*/
 	public function __destruct() {
+		if(is_object($this->resource)) {
+			mysqli_free_result($this->resource);
+		}
 		if ($this->identity) {
 			mysqli_close($this->identity);
 		}
@@ -91,14 +94,14 @@ class Mysqli implements \Smallphp\Database\Adapter  {
 	* 链接数据库
 	*/
 	private function connect() {
-		if ($this->identity === NULL) {
+		//if ($this->identity === NULL) {
 			$this->identity = @new \Mysqli($this->config['dbhost'], $this->config['dbuser'], $this->config['passwd'], $this->config['dbname']);
 			if (!$this->identity) {
 				if ($this->config['debug'] === true) {
 					throw new \Exception(mysqli_connect_error(), mysqli_connect_errno());
 				}
 			}
-		}
+		//}
 		return $this->identity;
 	}
 }

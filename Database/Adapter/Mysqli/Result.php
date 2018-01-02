@@ -16,10 +16,4 @@ class Result {
 		}
 		return $data;
 	}
-
-	public function __destruct() {
-		if(is_object($this->resource)) {
-			mysqli_free_result($this->resource);
-		}
-	}
 }

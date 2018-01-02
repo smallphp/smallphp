@@ -4,13 +4,11 @@ namespace App\Controller;
 class Index extends \Smallphp\Mvc\Controller {
 	
 	public function index() {
+		$id = 15201817856;
 		$view = \Smallphp\Di::get('view'); //view
-		$model1 = new \App\Model\Test();	   //model
-		$model2 = new \App\Model\User();	   //model
-		echo '<pre>';
-		print_r($model1);
-		print_r($model2);
-		$view->assign('title', 'Hello World');
+		$model = new \App\Model\Test();	   //model
+		$list = $model->limit(0, 10)->where(['id'=>1])->getAll();
+		$view->assign('list', $list);
 		$view->render('index/index.php');
 	}
 }

@@ -9,6 +9,10 @@
   <title>Smallphp Framework</title>
  </head>
  <body>
- <h3><?php echo $title;?></h3>
+ <h3>
+	<?php foreach ($list as $v){?>
+		<?php echo $v['id'],$v['name']?>
+	<?php }?>
+ </h3>
  </body>
 </html>

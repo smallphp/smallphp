@@ -6,7 +6,7 @@ abstract class Model {
 	/**
 	* 模型实例
 	*/
-	private $tables = array();
+	private $property =  NULL;
 
 	/**
 	* 数据库实例
@@ -21,14 +21,13 @@ abstract class Model {
 			$this->db = new \Smallphp\Database();	
 		}
 		$class = get_class($this);
-		if (!isset($this->tables[$class])) {
-			$this->tables[$class] = new \StdClass();
-			$this->tables[$class]->where = [];
-			$this->tables[$class]->offset = $this->tables[$class]->size = 0;
-			if (isset($this->table)) {
-				$this->tables[$class]->table = $this->table;
-			} else {
-				$this->tables[$class]->table =  strtolower(preg_replace('`.+(?<=['.preg_quote('\\').'])`', '', $class));
+		if ($this->property == NULL) {
+			$this->property = new \StdClass();
+			$this->property->query = [];
+			$this->property->query['where'] = array();
+			$this->property->query['offset'] = $this->property->query['size'] = 0;
+			if (!isset($this->table)) {
+				$this->table =  strtolower(preg_replace('`.+(?<=['.preg_quote('\\').'])`', '', $class));
 			}
 		}
 	}
@@ -51,19 +50,18 @@ abstract class Model {
 	* 所有结果
 	*/
 	public function getAll() {
-		$class = get_class($this);
-		$size = $this->tables[$class]->size;
-		$offset = $this->tables[$class]->offset;
+		$size = $this->property->query['size'];
+		$offset = $this->property->query['offset'];
 		$limit = '';
 		if ($size > 0) $limit = "limit {$offset}, {$size}";
-		return $this->db->select("SELECT * FROM {$this->table()} {$limit}")->fetchAll();
+		return $this->db->select("SELECT * FROM {$this->table} {$this->property->query['where']} {$limit}")->fetchAll();
 	}
 	
 	/**
 	* 获取总数
 	*/
 	public function getCount() {
-		$result = $this->db->select("SELECT count(*) FROM {$this->table()}")->fetchAll();
+		$result = $this->db->select("SELECT count(*) FROM {$this->table}")->fetchAll();
 		if ($result) {
 			return $result[0]['count(*)'];
 		}
@@ -74,8 +72,11 @@ abstract class Model {
 	* 条件实现
 	*/
 	public function where($condition) {
-		$class = get_class($this);
-		$this->tables[$class]->where = $condition;
+		if ($condition && is_array($condition)) {
+			$this->property->query['where'] =  'WHERE '. preg_replace('/^(and|or)/i', '', trim($this->buildCondition($condition)));
+		} else {
+			$this->property->query['where'] = '';
+		}
 		return $this;
 	}
 	
@@ -83,17 +84,44 @@ abstract class Model {
 	* limit实现
 	*/
 	public function limit($offset, $size) {
-		$class = get_class($this);
-		$this->tables[$class]->size = $size;
-		$this->tables[$class]->offset = $offset;
+		$this->property->query['size'] = $size;
+		$this->property->query['offset'] = $offset;
 		return $this;
 	}
+	
+	public function __destruct() {
+		$this->property->query = array();
+	}
 
-	/**
-	* 获取表名
-	*/
-	private function table() {
-		$class = get_class($this);
-		return $this->tables[$class]->table;
+
+	private function buildCondition($condition, $andor='and') {
+		$where = '';
+		$andor = strtoupper($andor);
+		foreach ($condition as $k=>$v) {
+			if (is_array($v)) {
+					if (preg_match('/[\d]+/', $k)) {
+						$where .= $andor.' ('.$this->buildCondition($v, '').') ';
+					} else {
+						$where .= $this->buildQuery($v, $k);
+					}
+			} else {
+				$field = $k;
+				$symbol = '=';
+				if (preg_match('`(?<=\[)(?:>[=]?|<[=]?)(?=[\]])`i', $k, $matchs)) {
+					$symbol = $matchs[0];
+					$field = preg_replace('`\['.$symbol.'\]`', '', $k);
+				}
+				if( ! is_int($v)) {
+					$v = '"'.$v.'"';
+				}
+				if ($andor == '0') {
+					$where.= ' `'.$field.'` '.$symbol.$v.' ';
+				} else {
+					$where.= ' '.$andor.' `'.$field.'` '.$symbol.' '.$v.' ';
+				}
+			}
+			
+		}
+		return $where;
 	}
 }
