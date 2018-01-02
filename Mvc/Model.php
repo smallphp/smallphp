@@ -102,19 +102,19 @@ abstract class Model {
 					if (preg_match('/[\d]+/', $k)) {
 						$where .= $andor.' ('.$this->buildCondition($v, '').') ';
 					} else {
-						$where .= $this->buildQuery($v, $k);
+						$where .= $this->buildCondition($v, $k);
 					}
 			} else {
 				$field = $k;
 				$symbol = '=';
-				if (preg_match('`(?<=\[)(?:>[=]?|<[=]?)(?=[\]])`i', $k, $matchs)) {
+				if (preg_match('`(?<=\[)(?:=|>[=]?|<[=]?)(?=[\]])`i', $k, $matchs)) {
 					$symbol = $matchs[0];
 					$field = preg_replace('`\['.$symbol.'\]`', '', $k);
 				}
 				if( ! is_int($v)) {
 					$v = '"'.$v.'"';
 				}
-				if ($andor == '0') {
+				if (preg_match('/[\d]+/', $andor)) {
 					$where.= ' `'.$field.'` '.$symbol.$v.' ';
 				} else {
 					$where.= ' '.$andor.' `'.$field.'` '.$symbol.' '.$v.' ';

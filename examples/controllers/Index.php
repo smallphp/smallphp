@@ -7,7 +7,7 @@ class Index extends \Smallphp\Mvc\Controller {
 		$id = 15201817856;
 		$view = \Smallphp\Di::get('view'); //view
 		$model = new \App\Model\Test();	   //model
-		$list = $model->limit(0, 10)->where(['id'=>1])->getAll();
+		$list = $model->limit(0, 10)->where(['id[>]'=>1])->getAll();
 		$view->assign('list', $list);
 		$view->render('index/index.php');
 	}
