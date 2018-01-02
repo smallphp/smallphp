@@ -24,7 +24,7 @@ abstract class Model {
 		if ($this->property == NULL) {
 			$this->property = new \StdClass();
 			$this->property->query = [];
-			$this->property->query['where'] = array();
+			$this->property->query['where'] = $this->property->query['order'] = $this->property->query['group'] = '';
 			$this->property->query['offset'] = $this->property->query['size'] = 0;
 			if (!isset($this->table)) {
 				$this->table =  strtolower(preg_replace('`.+(?<=['.preg_quote('\\').'])`', '', $class));
@@ -35,15 +35,29 @@ abstract class Model {
 	/**
 	* 一个字段
 	*/
-	public function getOne() {
-
+	public function getOne($field=0) {
+		$data = $this->getRow();
+		if ($data) {
+			if (isset($data[$field])) {
+				return $data[$field];
+			}
+			$fields = array_keys($data);
+			if (isset($fields[$field], $data[$fields[$field]])) {
+				return $data[$fields[$field]];
+			}
+		}
+		return NULL;
 	}
 	
 	/**
 	* 一条结果
 	*/
 	public function getRow() {
-
+		$data = $this->db->select("SELECT * FROM {$this->table} {$this->property->query['where']} LIMIT 1")->fetchAll();
+		if ($data) {
+			return $data[0];
+		}
+		return array();
 	}
 	
 	/**
@@ -54,14 +68,14 @@ abstract class Model {
 		$offset = $this->property->query['offset'];
 		$limit = '';
 		if ($size > 0) $limit = "limit {$offset}, {$size}";
-		return $this->db->select("SELECT * FROM {$this->table} {$this->property->query['where']} {$limit}")->fetchAll();
+		return $this->db->select("SELECT * FROM {$this->table} {$this->property->query['where']} {$this->property->query['group']} {$this->property->query['order']}  {$limit}")->fetchAll();
 	}
 	
 	/**
 	* 获取总数
 	*/
 	public function getCount() {
-		$result = $this->db->select("SELECT count(*) FROM {$this->table}")->fetchAll();
+		$result = $this->db->select("SELECT count(*) FROM {$this->table} {$this->property->query['where']} LIMIT 1")->fetchAll();
 		if ($result) {
 			return $result[0]['count(*)'];
 		}
@@ -79,7 +93,36 @@ abstract class Model {
 		}
 		return $this;
 	}
+
+	/**
+	* 排序实现
+	*/
+
+	public function order($fields) {
+		$order = '';
+		if ($fields && is_array($fields)) {
+			foreach ($fields as $k=>$v) {
+				$order.= ($k == '0' ? '`'.$v.'`'.' ASC' : '`'.$k.'`'.' '.strtoupper($v)).',';
+			}
+			$this->property->query['order'] = 'ORDER BY '.rtrim($order, ',');
+		}
+		return $this;
+	}
 	
+	/**
+	* 分组实现
+	*/
+	public function group($fields) {
+		$group = '';
+		if ($fields && is_array($fields)) {
+			foreach ($fields as $v) {
+				$group.= '`'.$v.'`,';
+			}
+			$this->property->query['group'] = 'GROUP BY '.rtrim($group, ',');
+		}
+		return $this;
+	}
+
 	/**
 	* limit实现
 	*/
@@ -93,7 +136,9 @@ abstract class Model {
 		$this->property->query = array();
 	}
 
-
+	/**
+	* 生成条件
+	*/
 	private function buildCondition($condition, $andor='and') {
 		$where = '';
 		$andor = strtoupper($andor);
