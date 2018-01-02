@@ -144,11 +144,11 @@ abstract class Model {
 		$andor = strtoupper($andor);
 		foreach ($condition as $k=>$v) {
 			if (is_array($v)) {
-					if (preg_match('/[\d]+/', $k)) {
-						$where .= $andor.' ('.$this->buildCondition($v, '').') ';
-					} else {
-						$where .= $this->buildCondition($v, $k);
-					}
+				if (preg_match('/[\d]+/', $k)) {
+					$where .= $andor.' ('.$this->buildCondition($v, '').') ';
+				} else {
+					$where .= $this->buildCondition($v, $k);
+				}
 			} else {
 				$field = $k;
 				$symbol = '=';
@@ -165,7 +165,6 @@ abstract class Model {
 					$where.= ' '.$andor.' `'.$field.'` '.$symbol.' '.$v.' ';
 				}
 			}
-			
 		}
 		return $where;
 	}
