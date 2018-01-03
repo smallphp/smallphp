@@ -132,6 +132,26 @@ abstract class Model {
 		return $this;
 	}
 	
+	/**
+	* 创建记录
+	*/
+	public function insert() {
+	
+	}
+	/**
+	* 更新记录
+	*/
+	public function update() {
+	
+	}
+
+	/**
+	* 创建更新
+	*/
+	public function upsert() {
+		
+	}
+	
 	public function __destruct() {
 		$this->property->query = array();
 	}
