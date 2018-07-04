@@ -158,34 +158,54 @@ abstract class Model {
 
 	/**
 	* 生成条件
+	* simple
+	* ['name'=>'a'] ----> `name` = a
+	* ['name'=>'a', 'age'=>28] ----> `name` = a AND `age` = 28
+	* ['name'=>'a', 'OR', 'age'=>28] ----> `name` = a OR `age` = 28
+	* [['name'=>'a', 'OR', 'age'=>28]], 'AND', ['class'=>'a'] ----> (`name` = a OR `age` = 28)  AND `class` = a
+	* [['name'=>'a', 'OR', 'age'=>28]], 'AND', [['class'=>'a', 'sex'=>'man']] ----> (`name` = a OR `age` = 28)  AND  (`class` = a AND `sex` = man)
+	* ['age'=>'>=90','name'=>'in("a","b")'] ----> `age` >= 90 AND `name` in("a","b")
 	*/
-	private function buildCondition($condition, $andor='and') {
-		$where = '';
-		$andor = strtoupper($andor);
-		foreach ($condition as $k=>$v) {
-			if (is_array($v)) {
-				if (preg_match('/[\d]+/', $k)) {
-					$where .= $andor.' ('.$this->buildCondition($v, '').') ';
-				} else {
-					$where .= $this->buildCondition($v, $k);
+	private function buildCondition() {
+		$query = '';
+		foreach (func_get_args() as $key=>$param) {
+			if (is_array($param)) {
+				$index = 0;
+				$count = count($param);
+				$field = array_keys($param);
+				foreach ($param as $key2=>$param2) {
+					if (is_array($param2)) {
+						$brackets = preg_match('/^[\d]+$/', $key2);
+						if ($brackets) {
+							$query.=' (';
+						}
+						$query.= $this->buildCondition($param2);
+						if ($brackets) {
+							$query.=') ';
+						}
+					} else {
+						++$index;
+						if (preg_match('/^[\d]+$/', $key2)) {
+							$query.= " {$param2} ";
+						} else {
+							$flag = isset($field[$index]) && preg_match('/^[\d]+$/', $field[$index]); // > >= < <=
+							if (preg_match('/(>[=]?|<[=]?)(.+)/', $param2, $matchs)) {
+								$query.= "`{$key2}` {$matchs[1]} {$matchs[2]}";
+							} else if (preg_match('/(in[\s]*\(.+\))/i', $param2, $matchs)) { //in
+								$query.= "`{$key2}` {$matchs[1]}";
+							} else {
+								$query.= "`{$key2}` = {$param2}";
+							}
+							if ($index < $count && !$flag) {
+								$query.= ' AND ';
+							}
+						}
+					}
 				}
 			} else {
-				$field = $k;
-				$symbol = '=';
-				if (preg_match('`(?<=\[)(?:=|>[=]?|<[=]?)(?=[\]])`i', $k, $matchs)) {
-					$symbol = $matchs[0];
-					$field = preg_replace('`\['.$symbol.'\]`', '', $k);
-				}
-				if( ! is_int($v)) {
-					$v = '"'.$v.'"';
-				}
-				if (preg_match('/[\d]+/', $andor)) {
-					$where.= ' `'.$field.'` '.$symbol.$v.' ';
-				} else {
-					$where.= ' '.$andor.' `'.$field.'` '.$symbol.' '.$v.' ';
-				}
+				$query.= " {$param} ";
 			}
 		}
-		return $where;
+		return trim($query);
 	}
 }
