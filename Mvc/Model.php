@@ -188,8 +188,8 @@ abstract class Model {
 						if (preg_match('/^[\d]+$/', $key2)) {
 							$query.= " {$param2} ";
 						} else {
-							$flag = isset($field[$index]) && preg_match('/^[\d]+$/', $field[$index]); // > >= < <=
-							if (preg_match('/(>[=]?|<[=]?)(.+)/', $param2, $matchs)) {
+							$flag = isset($field[$index]) && preg_match('/^[\d]+$/', $field[$index]); //下一个元素是否索引数据
+							if (preg_match('/(>[=]?|<[=]?)(.+)/', $param2, $matchs)) { // > >= < <=
 								$query.= "`{$key2}` {$matchs[1]} {$matchs[2]}";
 							} else if (preg_match('/(in[\s]*\(.+\))/i', $param2, $matchs)) { //in
 								$query.= "`{$key2}` {$matchs[1]}";
