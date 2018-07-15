@@ -85,9 +85,9 @@ abstract class Model {
 	/**
 	* 条件实现
 	*/
-	public function where($condition) {
+	public function where($condition=array()) {
 		if ($condition && is_array($condition)) {
-			$this->property->query['where'] =  'WHERE '. preg_replace('/^(and|or)/i', '', trim($this->buildCondition($condition)));
+			$this->property->query['where'] =  'WHERE '. trim($this->buildCondition($condition));
 		} else {
 			$this->property->query['where'] = '';
 		}
@@ -190,10 +190,19 @@ abstract class Model {
 						} else {
 							$flag = isset($field[$index]) && preg_match('/^[\d]+$/', $field[$index]); //下一个元素是否索引数据
 							if (preg_match('/(>[=]?|<[=]?)(.+)/', $param2, $matchs)) { // > >= < <=
+								if (!is_int($matchs[2])) {
+									$matchs[2] = "'{$matchs[2]}'";
+								}
 								$query.= "`{$key2}` {$matchs[1]} {$matchs[2]}";
 							} else if (preg_match('/(in[\s]*\(.+\))/i', $param2, $matchs)) { //in
+								if (!is_int($matchs[1])) {
+									$matchs[1] = "'{$matchs[1]}'";
+								}
 								$query.= "`{$key2}` {$matchs[1]}";
 							} else {
+								if (!is_int($param2)) {
+									$param2 = "'{$param2}'";
+								}
 								$query.= "`{$key2}` = {$param2}";
 							}
 							if ($index < $count && !$flag) {
