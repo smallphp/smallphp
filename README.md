@@ -1,6 +1,60 @@
 # Smallphp Framework
+框架目录
 ```
-#入口文件index.php
+├── Cache
+│   └── Adapter
+│       ├── Memcache.php
+│       └── Redis.php
+├── composer.json
+├── Config.php
+├── Database
+│   ├── Adapter
+│   │   ├── Mysqli
+│   │   │   └── Result.php
+│   │   └── Mysqli.php
+│   └── Adapter.php
+├── Database.php
+├── Di.php
+├── Dispatch.php
+├── examples
+│   ├── config
+│   │   ├── database.php
+│   │   └── router.php
+│   ├── controllers
+│   │   └── Index.php
+│   ├── index.php
+│   ├── models
+│   │   ├── Test.php
+│   │   └── User.php
+│   └── views
+│       └── index
+│           └── index.php
+├── Loader.php
+├── Mvc
+│   ├── Controller.php
+│   ├── Model.php
+│   ├── Router.php
+│   ├── Url.php
+│   └── View.php
+├── Nosql
+│   ├── Mongodb
+│   │   └── Query.php
+│   └── Mongodb.php
+├── README.md
+├── Request.php
+├── Session
+│   ├── Adapter
+│   │   ├── File.php
+│   │   ├── Memcache.php
+│   │   └── Redis.php
+│   └── Adapter.php
+├── Session.php
+└── Spl
+    └── ArrayAccess.php
+```
+入口文件examples/index.php
+```
+<?php
 define('APPPATH', dirname(__FILE__));
 include '/data/Smallphp/Loader.php';
 $loader = new \Smallphp\Loader();
