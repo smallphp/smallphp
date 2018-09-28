@@ -1,13 +1,15 @@
 <?php
+
 namespace Smallphp\Database;
 
-interface Adapter {
-	
-	public function query($sql);
+interface Adapter
+{
 
-	public function lastInsertId();
+    public function query($sql);
 
-	public function getErrorCode();
+    public function lastInsertId();
 
-	public function getErrorInfo();
+    public function getErrorCode();
+
+    public function getErrorInfo();
 }
